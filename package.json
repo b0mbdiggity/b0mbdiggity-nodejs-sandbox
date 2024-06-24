@@ -1,0 +1,20 @@
+{
+  "name": "sandbox",
+  "version": "1.0.0",
+  "description": "",
+  "main": "sandbox.ts",
+  "scripts": {
+    "sandbox": "tsc && node dist/src/sandbox.js"
+  },
+  "author": "b0mbdiggity",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.26.1",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.0",
+    "csv-parser": "^3.0.0",
+    "reflect-metadata": "^0.1.13",
+    "ts-retry": "^4.0.0",
+    "typescript": "^4.9.3"
+  }
+}
