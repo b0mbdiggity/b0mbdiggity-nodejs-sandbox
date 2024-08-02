@@ -1,11 +1,9 @@
-const sandbox = () => {
+import { parseForCMP, parseForPDMP } from "./work/uptn-asset";
+
+const sandbox = async () => {
+  // await parseForPDMP();
+  // await parseForCMP();
   console.log();
-
-  type ReturnType<T> = T extends (...args: any[]) => infer R ? R : any;
-
-  type Func = () => number;
-
-  type FuncReturnType = ReturnType<Func>; // number
 };
 
 sandbox();

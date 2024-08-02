@@ -1,1 +1,1 @@
-declare const datetest: () => void;
+export {};

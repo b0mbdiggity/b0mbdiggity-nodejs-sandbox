@@ -1,8 +1,7 @@
 "use strict";
-const datetest = () => {
-    class B {
-        hehe = "hehe";
-    }
+Object.defineProperty(exports, "__esModule", { value: true });
+const sandbox = async () => {
+    console.log(process.argv);
 };
-datetest();
+sandbox();
 //# sourceMappingURL=sandbox.js.map

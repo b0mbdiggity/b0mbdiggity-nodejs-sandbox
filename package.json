@@ -16,5 +16,10 @@
     "reflect-metadata": "^0.1.13",
     "ts-retry": "^4.0.0",
     "typescript": "^4.9.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.2",
+    "i": "^0.3.7",
+    "npm": "^10.8.2"
   }
 }
