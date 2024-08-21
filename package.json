@@ -9,6 +9,10 @@
   "author": "b0mbdiggity",
   "license": "ISC",
   "dependencies": {
+    "@orbs-network/ton-access": "^2.3.3",
+    "@ton/core": "^0.57.0",
+    "@ton/crypto": "^3.3.0",
+    "@ton/ton": "^15.0.0",
     "axios": "^0.26.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",

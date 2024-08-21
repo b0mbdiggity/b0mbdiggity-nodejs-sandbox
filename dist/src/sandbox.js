@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const uptn_asset_1 = require("./work/uptn-asset");
+const ton_transfer_1 = require("./work/ton-transfer");
 const sandbox = async () => {
-    await (0, uptn_asset_1.parseForPDMP)();
+    await (0, ton_transfer_1.jettonTransfer)();
 };
 sandbox();
 //# sourceMappingURL=sandbox.js.map
