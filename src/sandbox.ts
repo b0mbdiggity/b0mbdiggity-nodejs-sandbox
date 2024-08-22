@@ -1,8 +1,9 @@
 import { TonClient4, Address } from "@ton/ton";
-import { processTxsForever } from "./work/ton";
+import { processTxsForever } from "./work/ton/ton";
 import { parseForCMP, parseForPDMP } from "./work/uptn-asset";
 import { getHttpV4Endpoint } from "@orbs-network/ton-access";
-import { jettonTransfer, tonTransfer } from "./work/ton-transfer";
+import { tonTransfer } from "./work/ton/ton-transfer";
+import { jetton } from "./work/ton/jetton-transfer";
 
 const sandbox = async () => {
   // await parseForPDMP();
@@ -20,7 +21,7 @@ const sandbox = async () => {
   // );
 
   // await tonTransfer();
-  await jettonTransfer();
+  await jetton();
 };
 
 sandbox();
