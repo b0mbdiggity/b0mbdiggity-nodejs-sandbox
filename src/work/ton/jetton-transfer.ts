@@ -20,7 +20,7 @@ export const jetton = async () => {
   const WALLET2_ADDRESS = "0QD3_XUU1rFa2WHSqokgsLiqAvRb_5IFAdswxzugpcrJjZQf";
 
   const mnemonic =
-    "square gasp bonus pole join ivory memory sort empower carpet system mammal purse organ immune result copy unit section blast equal evidence goddess scrub"; // your 24 secret words (replace ... with the rest of the words)
+    "square gasp bonus pole join ivory memory sort empower carpet system mammal purse organ immune result copy unit section blast equal evidence goddess scrub";
   const key = await mnemonicToWalletKey(mnemonic.split(" "));
 
   const WalletClass = tonweb.wallet.all["v4R2"];

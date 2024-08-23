@@ -4,6 +4,8 @@ import { parseForCMP, parseForPDMP } from "./work/uptn-asset";
 import { getHttpV4Endpoint } from "@orbs-network/ton-access";
 import { tonTransfer } from "./work/ton/ton-transfer";
 import { jetton } from "./work/ton/jetton-transfer";
+import { batch } from "./work/ton/highload";
+import { transferTest } from "./work/ton/jetton-transfer-ton";
 
 const sandbox = async () => {
   // await parseForPDMP();
@@ -21,7 +23,8 @@ const sandbox = async () => {
   // );
 
   // await tonTransfer();
-  await jetton();
+  // await batch();
+  await transferTest();
 };
 
 sandbox();
