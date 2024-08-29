@@ -5,19 +5,21 @@ import {
   Address,
   TonClient,
   WalletContractV4,
+  WalletContractV5R1,
   internal,
   external,
   storeMessage,
   toNano,
+  SendMode,
 } from "@ton/ton";
 
 const usdtTokenContractAddress =
   "kQDIcEbTNyMX6YhiIqCBxyM0ODnRR2CEtQFLFp1gqNFEG8q-";
 const toAddress = Address.parse(
-  "0QD3_XUU1rFa2WHSqokgsLiqAvRb_5IFAdswxzugpcrJjZQf"
+  "0QD73AorUz_mGO4TEy8rfhBXVGiMiuFS9NYYk5EHK_cepFnC"
 );
 
-async function getUserJettonWalletAddress(
+export async function getUserJettonWalletAddress(
   userAddress: string,
   jettonMasterAddress: string
 ) {
@@ -47,17 +49,17 @@ export const transferTest = async () => {
 
   // Generate keyPair from mnemonic/secret key
   const mnemonic =
-    "square gasp bonus pole join ivory memory sort empower carpet system mammal purse organ immune result copy unit section blast equal evidence goddess scrub";
+    "carpet evoke nominee movie admit steak have sweet bleak twist lamp possible kick amused neck ostrich tourist economy execute level hard steel safe card";
   const keyPair = await mnemonicToWalletKey(mnemonic.split(" "));
   const secretKey = Buffer.from(keyPair.secretKey);
   const publicKey = Buffer.from(keyPair.publicKey);
 
   const workchain = 0; // Usually you need a workchain 0
-  const wallet = WalletContractV4.create({ workchain, publicKey });
+  const wallet = WalletContractV5R1.create({ workchain, publicKey });
   const address = wallet.address.toString({
     urlSafe: true,
     bounceable: false,
-    testOnly: false,
+    testOnly: true,
   });
   const contract = client.open(wallet);
 
@@ -83,21 +85,21 @@ export const transferTest = async () => {
   );
 
   // Comment payload
-  // const forwardPayload = beginCell()
-  //   .storeUint(0, 32) // 0 opcode means we have a comment
-  //   .storeStringTail('Hello, TON!')
-  //   .endCell();
+  const forwardPayload = beginCell()
+    .storeUint(0, 32) // 0 opcode means we have a comment
+    .storeStringTail("gameID11:userId22:itemId33")
+    .endCell();
 
   const messageBody = beginCell()
     .storeUint(0x0f8a7ea5, 32) // opcode for jetton transfer
     .storeUint(0, 64) // query id
-    .storeCoins(toNano("1")) // jetton amount, amount * 10^9
+    .storeCoins(toNano("1.2")) // jetton amount, amount * 10^9
     .storeAddress(toAddress)
     .storeAddress(toAddress) // response destination
     .storeBit(0) // no custom payload
     .storeCoins(0) // forward amount - if > 0, will send notification message
-    .storeBit(0) // we store forwardPayload as a reference, set 1 and uncomment next line for have a comment
-    // .storeRef(forwardPayload)
+    .storeBit(1) // we store forwardPayload as a reference, set 1 and uncomment next line for have a comment
+    .storeRef(forwardPayload)
     .endCell();
 
   const internalMessage = internal({
@@ -111,6 +113,7 @@ export const transferTest = async () => {
     seqno,
     secretKey,
     messages: [internalMessage],
+    sendMode: SendMode.NONE,
   });
 
   const externalMessage = external({
@@ -129,4 +132,13 @@ export const transferTest = async () => {
   console.log("hash:", hash);
 
   await client.sendFile(signedTransaction);
+
+  console.log("Transaction sent. Waiting for confirmation...");
+  const intervalId = setInterval(async () => {
+    const seqNo2 = await contract.getSeqno();
+    if (seqNo2 > seqno) {
+      console.log("✅ Transaction confirmed!\n");
+      clearInterval(intervalId);
+    }
+  }, 3000);
 };

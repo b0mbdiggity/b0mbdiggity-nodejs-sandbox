@@ -10,7 +10,6 @@ import {
 } from "@ton/ton";
 import { mnemonicToWalletKey } from "@ton/crypto";
 import { toNano, OpenedContract, beginCell, internal } from "@ton/core";
-import { JettonMinter } from "./JettonMinter";
 import { getHttpEndpoint } from "@orbs-network/ton-access";
 import TonWeb from "tonweb";
 

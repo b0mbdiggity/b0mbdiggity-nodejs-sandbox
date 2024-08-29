@@ -17,32 +17,21 @@ exports.processTxsForever = processTxsForever;
 function parseTransferNotification(cell) {
     const s = cell.beginParse();
     const opcode = s.loadUint(32);
-    if (opcode === 0x7362d09c) {
-        return {
+    if (opcode === 0x178d4519) {
+        console.log("opcode >>", opcode, cell);
+        const parsed = {
             queryId: s.loadUintBig(64),
             amount: s.loadCoins(),
             sender: s.loadAddress(),
-            forwardPayload: s.loadBoolean() ? s.loadRef() : s.asCell(),
+            forwardPayload: s.remainingRefs > 0 ? s.loadRef() : s.asCell(),
         };
-    }
-    else if (opcode === 0x546de4ef) {
-        return {
-            queryId: s.loadUintBig(64),
-            amount: s.loadCoins(),
-            sender: ton_1.Address.parseRaw(s.loadBits(267).toString()),
-            forwardPayload: s.loadBoolean() ? s.loadRef() : s.asCell(),
-        };
+        console.log("parsed>>", parsed);
+        return parsed;
     }
     else {
         console.log(`Unexpected opcode: 0x${opcode.toString(16)}`);
         throw new Error("Invalid opcode");
     }
-    return {
-        queryId: s.loadUintBig(64),
-        amount: s.loadCoins(),
-        sender: s.loadAddress(),
-        forwardPayload: s.loadBoolean() ? s.loadRef() : s.asCell(),
-    };
 }
 function parsePurchaseRequest(tx) {
     try {
@@ -57,12 +46,13 @@ function parsePurchaseRequest(tx) {
             throw new Error("Invalid opcode");
         const msg = fs.loadStringTail();
         const parts = msg.split(":");
-        if (parts.length !== 2) {
+        if (parts.length !== 3) {
             throw new Error("Invalid message");
         }
         return {
-            userID: Number(parts[0]),
-            itemID: Number(parts[1]),
+            gameID: parts[0],
+            userID: parts[1],
+            itemID: parts[2],
             amount: parsed.amount,
             hash: tx.hash(),
             lt: tx.lt,
@@ -80,7 +70,6 @@ async function findPurchaseRequests(client, address, from, known) {
     let first = true;
     mainLoop: while (true) {
         const txs = await client.getAccountTransactions(address, curLt, curHash);
-        console.log("txs>>", txs);
         if (first) {
             first = false;
         }
@@ -120,8 +109,7 @@ async function processTxs(address, client, known) {
         };
         console.log("newKnown>>", newKnown);
         let purchaseRequests = await findPurchaseRequests(client, address, newKnown, known);
-        const itemIDs = Array.from(new Set(purchaseRequests.map((p) => p.itemID)));
-        console.log("result >>>", itemIDs);
+        console.log("result >>>", purchaseRequests);
         return newKnown;
     }
     catch (e) {

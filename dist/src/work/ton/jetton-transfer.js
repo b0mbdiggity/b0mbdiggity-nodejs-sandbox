@@ -126,9 +126,6 @@ const jetton = async () => {
         })
             .send());
     };
-    const promises = [transfer(), transfer(), transfer()];
-    const results = await Promise.all(promises);
-    console.log(results);
 };
 exports.jetton = jetton;
 //# sourceMappingURL=jetton-transfer.js.map

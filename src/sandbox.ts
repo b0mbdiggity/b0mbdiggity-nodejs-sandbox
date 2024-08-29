@@ -3,9 +3,11 @@ import { processTxsForever } from "./work/ton/ton";
 import { parseForCMP, parseForPDMP } from "./work/uptn-asset";
 import { getHttpV4Endpoint } from "@orbs-network/ton-access";
 import { tonTransfer } from "./work/ton/ton-transfer";
-import { jetton } from "./work/ton/jetton-transfer";
-import { batch } from "./work/ton/highload";
-import { transferTest } from "./work/ton/jetton-transfer-ton";
+import {
+  getUserJettonWalletAddress,
+  transferTest,
+} from "./work/ton/jetton-transfer-ton";
+import { detectJettonTransfer } from "./work/ton/ton-web-watch";
 
 const sandbox = async () => {
   // await parseForPDMP();
@@ -24,7 +26,21 @@ const sandbox = async () => {
 
   // await tonTransfer();
   // await batch();
-  await transferTest();
+  // await transferTest();
+  await detectJettonTransfer(
+    "0QD73AorUz_mGO4TEy8rfhBXVGiMiuFS9NYYk5EHK_cepFnC",
+    "kQDIcEbTNyMX6YhiIqCBxyM0ODnRR2CEtQFLFp1gqNFEG8q-"
+  );
+  // const jettonWalletAddress = await getUserJettonWalletAddress(
+  //   Address.parse("0QD3_XUU1rFa2WHSqokgsLiqAvRb_5IFAdswxzugpcrJjZQf").toString({
+  //     urlSafe: true,
+  //     bounceable: false,
+  //     testOnly: true,
+  //   }),
+  //   "kQDIcEbTNyMX6YhiIqCBxyM0ODnRR2CEtQFLFp1gqNFEG8q-"
+  // );
+
+  // console.log("jettonWalletAddress", jettonWalletAddress);
 };
 
 sandbox();
