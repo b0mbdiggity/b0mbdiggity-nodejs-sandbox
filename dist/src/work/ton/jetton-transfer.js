@@ -1,131 +1,98 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.jetton = void 0;
-const crypto_1 = require("@ton/crypto");
+exports.transferTest = exports.getUserJettonWalletAddress = void 0;
 const ton_access_1 = require("@orbs-network/ton-access");
-const tonweb_1 = __importDefault(require("tonweb"));
-const { JettonMinter, JettonWallet } = tonweb_1.default.token.jetton;
-const jetton = async () => {
+const crypto_1 = require("@ton/crypto");
+const ton_1 = require("@ton/ton");
+const usdtTokenContractAddress = "kQDIcEbTNyMX6YhiIqCBxyM0ODnRR2CEtQFLFp1gqNFEG8q-";
+const toAddress = ton_1.Address.parse("0QD73AorUz_mGO4TEy8rfhBXVGiMiuFS9NYYk5EHK_cepFnC");
+async function getUserJettonWalletAddress(userAddress, jettonMasterAddress) {
     const endpoint = await (0, ton_access_1.getHttpEndpoint)({ network: "testnet" });
-    const tonweb = new tonweb_1.default(new tonweb_1.default.HttpProvider(endpoint));
-    const seed = tonweb_1.default.utils.base64ToBytes("vt58J2v6FaSuXFGcyGtqT5elpVxcZ+I1zgu/GUfA5uY=");
-    const seed2 = tonweb_1.default.utils.base64ToBytes("at58J2v6FaSuXFGcyGtqT5elpVxcZ+I1zgu/GUfA5uY=");
-    const WALLET2_ADDRESS = "0QD3_XUU1rFa2WHSqokgsLiqAvRb_5IFAdswxzugpcrJjZQf";
-    const mnemonic = "square gasp bonus pole join ivory memory sort empower carpet system mammal purse organ immune result copy unit section blast equal evidence goddess scrub";
-    const key = await (0, crypto_1.mnemonicToWalletKey)(mnemonic.split(" "));
-    const WalletClass = tonweb.wallet.all["v4R2"];
-    const wallet = new WalletClass(tonweb.provider, {
-        publicKey: key.publicKey,
-        wc: 0,
+    const client = new ton_1.TonClient({
+        endpoint,
     });
-    const walletAddress = await wallet.getAddress();
-    console.log("wallet address=", walletAddress.toString(true, true, false, true));
-    console.log("balance=", await tonweb.getBalance(await wallet.getAddress()));
-    const minter = new JettonMinter(tonweb.provider, {
-        adminAddress: walletAddress,
-        jettonContentUri: "https://ton.org/jetton.json",
-        jettonWalletCodeHex: JettonWallet.codeHex,
+    const userAddressCell = (0, ton_1.beginCell)()
+        .storeAddress(ton_1.Address.parse(userAddress))
+        .endCell();
+    const response = await client.runMethod(ton_1.Address.parse(jettonMasterAddress), "get_wallet_address", [{ type: "slice", cell: userAddressCell }]);
+    return response.stack.readAddress();
+}
+exports.getUserJettonWalletAddress = getUserJettonWalletAddress;
+const transferTest = async () => {
+    const endpoint = await (0, ton_access_1.getHttpEndpoint)({ network: "testnet" });
+    const client = new ton_1.TonClient({
+        endpoint,
     });
-    const minterAddress = await minter.getAddress();
-    console.log("minter address=", minterAddress.toString(true, true, true, true));
-    const JETTON_WALLET_ADDRESS = "kQAKMCPKF4QkB7p-zpL14nYhOjXwbAewH1axYUtAaWIwI67q";
-    const jettonWallet = new JettonWallet(tonweb.provider, {
-        address: JETTON_WALLET_ADDRESS,
+    const mnemonic = "carpet evoke nominee movie admit steak have sweet bleak twist lamp possible kick amused neck ostrich tourist economy execute level hard steel safe card";
+    const keyPair = await (0, crypto_1.mnemonicToWalletKey)(mnemonic.split(" "));
+    const secretKey = Buffer.from(keyPair.secretKey);
+    const publicKey = Buffer.from(keyPair.publicKey);
+    const workchain = 0;
+    const wallet = ton_1.WalletContractV5R1.create({ workchain, publicKey });
+    const address = wallet.address.toString({
+        urlSafe: true,
+        bounceable: false,
+        testOnly: true,
     });
-    const deployMinter = async () => {
-        const seqno = (await wallet.methods.seqno().call()) || 0;
-        console.log({ seqno });
-        console.log(await wallet.methods
-            .transfer({
-            secretKey: key.secretKey,
-            toAddress: minterAddress.toString(true, true, true),
-            amount: tonweb_1.default.utils.toNano("0.05"),
-            seqno: seqno,
-            payload: null,
-            sendMode: 3,
-            stateInit: (await minter.createStateInit()).stateInit,
-        })
-            .send());
-    };
-    const getMinterInfo = async () => {
-        const data = await minter.getJettonData();
-        const temp = {};
-        temp.totalSupply = data.totalSupply.toString();
-        temp.adminAddress = data.adminAddress.toString(true, true, true);
-        console.log(temp);
-        const jettonWalletAddress = await minter.getJettonWalletAddress(walletAddress);
-        console.log("getJettonWalletAddress=", jettonWalletAddress.toString(true, true, true, true));
-    };
-    const getJettonWalletInfo = async () => {
-        const data = await jettonWallet.getData();
-        const temp = {};
-        temp.balance = data.balance.toString();
-        temp.ownerAddress = data.ownerAddress.toString(true, true, true, true);
-        temp.jettonMinterAddress = data.jettonMinterAddress.toString(true, true, true, true);
-        console.log(temp);
-    };
-    const mint = async () => {
-        const seqno = (await wallet.methods.seqno().call()) || 0;
-        console.log({ seqno });
-        console.log(await wallet.methods
-            .transfer({
-            secretKey: key.secretKey,
-            toAddress: minterAddress.toString(true, true, true, true),
-            amount: tonweb_1.default.utils.toNano("0.05"),
-            seqno: seqno,
-            payload: minter.createMintBody({
-                jettonAmount: tonweb_1.default.utils.toNano("1000000"),
-                destination: walletAddress,
-                amount: tonweb_1.default.utils.toNano("0.05"),
-            }),
-            sendMode: 3,
-        })
-            .send());
-    };
-    const transfer = async () => {
-        const seqno = (await wallet.methods.seqno().call()) || 0;
-        console.log({ seqno });
-        const comment = new Uint8Array([
-            ...new Uint8Array(4),
-            ...new TextEncoder().encode("gift"),
-        ]);
-        console.log(await wallet.methods
-            .transfer({
-            secretKey: key.secretKey,
-            toAddress: JETTON_WALLET_ADDRESS,
-            amount: tonweb_1.default.utils.toNano("0.05"),
-            seqno: seqno,
-            payload: await jettonWallet.createTransferBody({
-                jettonAmount: tonweb_1.default.utils.toNano("500"),
-                toAddress: new tonweb_1.default.utils.Address(WALLET2_ADDRESS),
-                forwardAmount: tonweb_1.default.utils.toNano("0.01"),
-                forwardPayload: comment,
-                responseAddress: walletAddress,
-            }),
-            sendMode: 3,
-        })
-            .send());
-    };
-    const burn = async () => {
-        const seqno = (await wallet.methods.seqno().call()) || 0;
-        console.log({ seqno });
-        console.log(await wallet.methods
-            .transfer({
-            secretKey: key.secretKey,
-            toAddress: JETTON_WALLET_ADDRESS,
-            amount: tonweb_1.default.utils.toNano("0.05"),
-            seqno: seqno,
-            payload: await jettonWallet.createBurnBody({
-                tokenAmount: tonweb_1.default.utils.toNano("400"),
-                responseAddress: walletAddress,
-            }),
-            sendMode: 3,
-        })
-            .send());
-    };
+    const contract = client.open(wallet);
+    const balance = await contract.getBalance();
+    console.log({ address, balance });
+    const seqno = await contract.getSeqno();
+    console.log({ address, seqno });
+    const { init } = contract;
+    const contractDeployed = await client.isContractDeployed(ton_1.Address.parse(address));
+    let neededInit = null;
+    if (init && !contractDeployed) {
+        neededInit = init;
+    }
+    const jettonWalletAddress = await getUserJettonWalletAddress(address, usdtTokenContractAddress);
+    const forwardPayload = (0, ton_1.beginCell)()
+        .storeUint(0, 32)
+        .storeStringTail("gameID11:userId22:itemId33")
+        .endCell();
+    const messageBody = (0, ton_1.beginCell)()
+        .storeUint(0x0f8a7ea5, 32)
+        .storeUint(0, 64)
+        .storeCoins((0, ton_1.toNano)("1.2"))
+        .storeAddress(toAddress)
+        .storeAddress(toAddress)
+        .storeBit(0)
+        .storeCoins(0)
+        .storeBit(1)
+        .storeRef(forwardPayload)
+        .endCell();
+    const internalMessage = (0, ton_1.internal)({
+        to: jettonWalletAddress,
+        value: (0, ton_1.toNano)("0.1"),
+        bounce: true,
+        body: messageBody,
+    });
+    const body = wallet.createTransfer({
+        seqno,
+        secretKey,
+        messages: [internalMessage],
+        sendMode: ton_1.SendMode.NONE,
+    });
+    const externalMessage = (0, ton_1.external)({
+        to: address,
+        init: neededInit,
+        body,
+    });
+    const externalMessageCell = (0, ton_1.beginCell)()
+        .store((0, ton_1.storeMessage)(externalMessage))
+        .endCell();
+    const signedTransaction = externalMessageCell.toBoc();
+    const hash = externalMessageCell.hash().toString("hex");
+    console.log("hash:", hash);
+    await client.sendFile(signedTransaction);
+    console.log("Transaction sent. Waiting for confirmation...");
+    const intervalId = setInterval(async () => {
+        const seqNo2 = await contract.getSeqno();
+        if (seqNo2 > seqno) {
+            console.log("✅ Transaction confirmed!\n");
+            clearInterval(intervalId);
+        }
+    }, 3000);
 };
-exports.jetton = jetton;
+exports.transferTest = transferTest;
 //# sourceMappingURL=jetton-transfer.js.map

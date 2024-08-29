@@ -68,14 +68,6 @@ export async function detectJettonTransfer(
     jettonMasterAddress
   );
 
-  // 트랜잭션 모니터링
-  // const transactions = (
-  //   await axios.get(
-  //     `${apiBaseUrl}/getTransactions?address=${jettonWalletAddress}&limit=${100}&hash=${"047f4f27a0f73af1a9c0f4aa5ad1f806773467a81ebcdbea11c6a794864c0ee8"}&lt=${"25299474000001"}`
-  //   )
-  // ).data.result;
-
-  // console.log("transactions>>", JSON.stringify(transactions.result, null, 2));
   const transactions = await client.getTransactions(jettonWalletAddress, {
     limit: 100,
     // hash: "BH9PJ6D3OvGpwPSqWtH4Bnc0Z6gevNvqEcanlIZMDug=",

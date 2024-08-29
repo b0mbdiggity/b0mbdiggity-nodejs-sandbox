@@ -4,8 +4,7 @@
   "description": "",
   "main": "sandbox.ts",
   "scripts": {
-    "sandbox": "tsc && node dist/src/sandbox.js",
-    "ton-watch": "tsc && node dist/src/ton-watch.js"
+    "sandbox": "tsc && node dist/src/sandbox.js"
   },
   "author": "b0mbdiggity",
   "license": "ISC",
