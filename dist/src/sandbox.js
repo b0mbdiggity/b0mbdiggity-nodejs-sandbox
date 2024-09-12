@@ -1,8 +1,12 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const ton_watch_1 = require("./work/ton/ton-watch");
+const crypto_1 = __importDefault(require("crypto"));
 const sandbox = async () => {
-    await (0, ton_watch_1.detectTonTransfer)("0QD73AorUz_mGO4TEy8rfhBXVGiMiuFS9NYYk5EHK_cepFnC");
+    const iv = crypto_1.default.randomBytes(16);
+    console.log(iv);
 };
 sandbox();
 //# sourceMappingURL=sandbox.js.map

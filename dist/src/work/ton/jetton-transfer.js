@@ -5,7 +5,7 @@ const ton_access_1 = require("@orbs-network/ton-access");
 const crypto_1 = require("@ton/crypto");
 const ton_1 = require("@ton/ton");
 const usdtTokenContractAddress = "kQDIcEbTNyMX6YhiIqCBxyM0ODnRR2CEtQFLFp1gqNFEG8q-";
-const toAddress = ton_1.Address.parse("0QD73AorUz_mGO4TEy8rfhBXVGiMiuFS9NYYk5EHK_cepFnC");
+const toAddress = ton_1.Address.parse("0QBgWJPWh0E5rlz4ygIqa2OtlZTOcE3UctNW2xvmUO4JCgAq");
 async function getUserJettonWalletAddress(userAddress, jettonMasterAddress) {
     const endpoint = await (0, ton_access_1.getHttpEndpoint)({ network: "testnet" });
     const client = new ton_1.TonClient({
@@ -23,7 +23,7 @@ const transferTest = async () => {
     const client = new ton_1.TonClient({
         endpoint,
     });
-    const mnemonic = "carpet evoke nominee movie admit steak have sweet bleak twist lamp possible kick amused neck ostrich tourist economy execute level hard steel safe card";
+    const mnemonic = "crash attitude rubber shop magic hockey visual embark inquiry monster aerobic warfare other hire account rally wealth glimpse music give actor frame off frost";
     const keyPair = await (0, crypto_1.mnemonicToWalletKey)(mnemonic.split(" "));
     const secretKey = Buffer.from(keyPair.secretKey);
     const publicKey = Buffer.from(keyPair.publicKey);
@@ -48,12 +48,12 @@ const transferTest = async () => {
     const jettonWalletAddress = await getUserJettonWalletAddress(address, usdtTokenContractAddress);
     const forwardPayload = (0, ton_1.beginCell)()
         .storeUint(0, 32)
-        .storeStringTail("gameID11:userId22:itemId33")
+        .storeStringTail("f89533a8-3145-4c34-b160-961cd4553793")
         .endCell();
     const messageBody = (0, ton_1.beginCell)()
         .storeUint(0x0f8a7ea5, 32)
         .storeUint(0, 64)
-        .storeCoins((0, ton_1.toNano)("1.2"))
+        .storeCoins((0, ton_1.toNano)("4.1"))
         .storeAddress(toAddress)
         .storeAddress(toAddress)
         .storeBit(0)

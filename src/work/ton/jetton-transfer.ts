@@ -16,7 +16,7 @@ import {
 const usdtTokenContractAddress =
   "kQDIcEbTNyMX6YhiIqCBxyM0ODnRR2CEtQFLFp1gqNFEG8q-";
 const toAddress = Address.parse(
-  "0QD73AorUz_mGO4TEy8rfhBXVGiMiuFS9NYYk5EHK_cepFnC"
+  "0QBgWJPWh0E5rlz4ygIqa2OtlZTOcE3UctNW2xvmUO4JCgAq"
 );
 
 export async function getUserJettonWalletAddress(
@@ -49,7 +49,7 @@ export const transferTest = async () => {
 
   // Generate keyPair from mnemonic/secret key
   const mnemonic =
-    "carpet evoke nominee movie admit steak have sweet bleak twist lamp possible kick amused neck ostrich tourist economy execute level hard steel safe card";
+    "crash attitude rubber shop magic hockey visual embark inquiry monster aerobic warfare other hire account rally wealth glimpse music give actor frame off frost";
   const keyPair = await mnemonicToWalletKey(mnemonic.split(" "));
   const secretKey = Buffer.from(keyPair.secretKey);
   const publicKey = Buffer.from(keyPair.publicKey);
@@ -87,13 +87,13 @@ export const transferTest = async () => {
   // Comment payload
   const forwardPayload = beginCell()
     .storeUint(0, 32) // 0 opcode means we have a comment
-    .storeStringTail("gameID11:userId22:itemId33")
+    .storeStringTail("f89533a8-3145-4c34-b160-961cd4553793")
     .endCell();
 
   const messageBody = beginCell()
     .storeUint(0x0f8a7ea5, 32) // opcode for jetton transfer
     .storeUint(0, 64) // query id
-    .storeCoins(toNano("1.2")) // jetton amount, amount * 10^9
+    .storeCoins(toNano("4.1")) // jetton amount, amount * 10^9
     .storeAddress(toAddress)
     .storeAddress(toAddress) // response destination
     .storeBit(0) // no custom payload

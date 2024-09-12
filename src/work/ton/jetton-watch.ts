@@ -28,7 +28,9 @@ export async function getUserJettonWalletAddress(
     [{ type: "slice", cell: userAddressCell }]
   );
 
-  return response.stack.readAddress();
+  const jettonAddress = response.stack.readAddress();
+  console.log(jettonAddress);
+  return jettonAddress;
 }
 
 // 전송 메시지 파싱 함수
@@ -68,13 +70,27 @@ export async function detectJettonTransfer(
     jettonMasterAddress
   );
 
-  const transactions = await client.getTransactions(jettonWalletAddress, {
-    limit: 100,
-    // hash: "BH9PJ6D3OvGpwPSqWtH4Bnc0Z6gevNvqEcanlIZMDug=",
-    // lt: "25299474000001",
-    // hash: "W9k9mwMrBLVbu+S1ZjHBFVO4yHUaTcz1OqD71gOyhFQ=",
-    // lt: "25261905000001",
-  });
+  console.log(
+    "jettonWalletAddress>>",
+    jettonWalletAddress.toString({
+      urlSafe: true,
+      bounceable: false,
+      testOnly: true,
+    })
+  );
+
+  let ttt = false;
+  let transactions;
+  while (!ttt) {
+    try {
+      transactions = await client.getTransactions(jettonWalletAddress, {
+        limit: 100,
+      });
+      ttt = true;
+    } catch (e) {
+      console.log("failed");
+    }
+  }
 
   for (const tx of transactions) {
     if (tx.inMessage && tx.inMessage.body) {
@@ -83,8 +99,9 @@ export async function detectJettonTransfer(
       );
 
       if (op === 0x178d4519) {
+        console.log("tx.inMessage.info.type", tx.inMessage.info.type);
         // 보낸건 Jetton Transfer 0x0f8a7ea5 오퍼레이션으로 필터링 하면 됨
-        // 받은건 Jetton Internal Transfer 오퍼레이션으로 필터링 하면 됨
+        // 받은건 Jetton Internal Transfer 0x178d4519 오퍼레이션으로 필터링 하면 됨
         console.log(`Jetton transfer detected:`);
         console.log(`tx: ${tx.hash().toString("base64")}`);
         console.log(`tx: ${tx.hash().toString("hex")}`);
