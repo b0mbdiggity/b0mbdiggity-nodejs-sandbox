@@ -1,8 +1,10 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const sandbox = async () => {
+const run = async () => {
     const fs = require("fs");
-    let [conditions, cards] = fs.readFileSync("what", "utf-8").trim().split("\n");
+    let [conditions, cards] = fs
+        .readFileSync("input", "utf-8")
+        .trim()
+        .split("\n");
     conditions = conditions.split(" ").map(Number);
     cards = cards.split(" ").map(Number);
     const target = conditions[1];
@@ -26,5 +28,4 @@ const sandbox = async () => {
     }
     console.log(current);
 };
-sandbox();
-//# sourceMappingURL=sandbox.js.map
+//# sourceMappingURL=baekjoon-2798.js.map
